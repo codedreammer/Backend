@@ -8,7 +8,10 @@ app.use(cors());
 app.use(express.json());
 
 // routes
+const commentRoutes = require("./routes/commentRoutes");
 const postRoutes = require("./routes/postRoutes");
+
+app.use("/api/comments", commentRoutes);
 app.use("/api/posts", postRoutes);
 
 // test route
