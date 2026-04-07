@@ -1,4 +1,5 @@
 const Post = require("../models/postModel");
+const Comment = require("../models/commentModel");
 
 const getPosts = async (req, res) => {
   try {
@@ -26,7 +27,19 @@ const createPost = async (req, res) => {
   }
 };
 
+const getPostWithComments = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const comments = await Comment.find({ postId: req.params.id });
+
+    res.json({ post, comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getPosts,
   createPost,
+  getPostWithComments,
 };

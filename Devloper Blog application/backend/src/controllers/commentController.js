@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Comment = require("../models/commentModel");
-
+ 
 // ADD COMMENT
 const addComment = async (req, res) => {
 try {
@@ -31,7 +31,9 @@ const getComments = async (req, res) => {
 try {
     const { postId } = req.params;
 
-    const comments = await Comment.find({ postId }).sort({ createdAt: -1 });
+    const comments = await Comment.find({ postId })
+        .populate("postId", "title content")
+        .sort({ createdAt: -1 });
 
     res.json(comments);
 } catch (error) {

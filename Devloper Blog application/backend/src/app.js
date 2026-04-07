@@ -3,14 +3,15 @@ const cors = require("cors");
 
 const app = express();
 
-// middleware
-app.use(cors());
-app.use(express.json());
-
 // routes
 const commentRoutes = require("./routes/commentRoutes");
 const postRoutes = require("./routes/postRoutes");
+const authRoutes = require("./routes/authRoutes");
 
+// middleware
+app.use(cors());
+app.use(express.json());
+app.use("/api/auth", authRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/posts", postRoutes);
 
