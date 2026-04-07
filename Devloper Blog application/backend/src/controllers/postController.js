@@ -38,8 +38,33 @@ const getPostWithComments = async (req, res) => {
   }
 };
 
+const likePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const userId = req.user.id;
+
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter(id => id.toString() !== userId);
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+
+    res.json({ message: "Like toggled", likesCount: post.likes.length });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
-  getPosts,
   createPost,
+  getPosts,
   getPostWithComments,
+  likePost,
 };
