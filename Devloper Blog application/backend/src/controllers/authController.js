@@ -5,7 +5,8 @@
     // SIGNUP
     const signup = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { name, username, email, password, bio } = req.body;
+        const displayName = name || username;
 
         // check user exists
         const existingUser = await User.findOne({ email });
@@ -18,9 +19,11 @@
 
         // create user
         const user = await User.create({
+        name: displayName,
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        bio
         });
 
         res.status(201).json({ message: "User registered", user });

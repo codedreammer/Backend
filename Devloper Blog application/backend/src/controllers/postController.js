@@ -3,7 +3,16 @@ const Comment = require("../models/commentModel");
 
 const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const posts = await Post.find().populate('author', 'name username').sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserPosts = async (req, res) => {
+  try {
+    const posts = await Post.find({ author: req.user.id }).populate('author', 'name username').sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -20,7 +29,7 @@ const createPost = async (req, res) => {
       });
     }
 
-    const post = await Post.create({ title, content });
+    const post = await Post.create({ title, content, author: req.user.id });
     res.status(201).json(post);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -29,8 +38,8 @@ const createPost = async (req, res) => {
 
 const getPostWithComments = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    const comments = await Comment.find({ postId: req.params.id });
+    const post = await Post.findById(req.params.id).populate('author', 'name username');
+    const comments = await Comment.find({ post: req.params.id }).populate('user', 'name username');
 
     res.json({ post, comments });
   } catch (error) {
@@ -49,7 +58,7 @@ const likePost = async (req, res) => {
     const userId = req.user.id;
 
     if (post.likes.includes(userId)) {
-      post.likes = post.likes.filter(id => id.toString() !== userId);
+      post.likes.pull(userId);
     } else {
       post.likes.push(userId);
     }
@@ -65,6 +74,7 @@ const likePost = async (req, res) => {
 module.exports = {
   createPost,
   getPosts,
+  getUserPosts,
   getPostWithComments,
   likePost,
 };
