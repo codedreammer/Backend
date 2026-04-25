@@ -5,8 +5,9 @@
     addComment,
     getComments
     } = require("../controllers/commentController");
+    const authMiddleware = require("../middlewares/authMiddleware");
 
-    router.post("/", addComment);
+    router.post("/", authMiddleware, addComment);
     router.get("/:postId", getComments);
 
     module.exports = router;
