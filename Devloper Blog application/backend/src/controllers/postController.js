@@ -63,7 +63,7 @@ const likePost = async (req, res) => {
       post.likes.push(userId);
     }
 
-    await post.save();
+    await post.save({ validateBeforeSave: false });
 
     res.json({ message: "Like toggled", likesCount: post.likes.length });
   } catch (error) {
